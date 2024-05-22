@@ -4,16 +4,30 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <link rel="stylesheet" href="./output.css" />
+    <script src="./main.js" defer></script>
     <title>A Poke Story!</title>
   </head>
-  <body class="mt-10 flex flex-col items-center">
+  <body class="mt-10 flex flex-col items-center gap-10">
     <h1 class="font-serif text-4xl text-teal-600">Poke Story!</h1>
+    <form id="pokemon" class="flex flex-col items-center gap-4">
+      <label for="poke-name">Type your poke-friend!</label>
+      <div>
+        <input
+          type="text"
+          name="poke-name"
+          id="poke-name"
+          class="border border-slate-100 p-2 shadow-inner outline-1 outline-pink-300"
+        />
+        <button type="submit" class="rounded-md bg-teal-400 p-2 shadow-md">
+          I choose you!
+        </button>
+      </div>
+    </form>
     <div id="content-box" class="mt-10 flex flex-col items-center gap-16">
-      <h2 class="text-center">A amazing story about a pokemon...</h2>
       <div id="image-box" class="h-[250px] w-[250px] rounded-lg bg-slate-300">
         Image here
       </div>
-      <div id="story-box" class="h-[250px] w-[500px] rounded-lg bg-purple-200">
+      <div id="story-box" class="h-[250px] w-[500px] rounded-lg bg-purple-200 p-6 font-light italic">
         story here
       </div>
     </div>
