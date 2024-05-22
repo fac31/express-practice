@@ -2,10 +2,14 @@ import express from "express";
 import OpenAI from "openai";
 import path from "path";
 import { fileURLToPath } from "url";
+import dotenv from "dotenv";
+
+dotenv.config();
 
 const PORT = process.env.PORT || 3000;
 
 const app = express();
+const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
@@ -24,8 +28,8 @@ app.post("/api-blend", async (req, res) => {
   // https://pokeapi.co/api/v2/pokemon/ Hint: image is sprites key
 
   //Todo make call to chat gpt api
-  const openai = new OpenAI();
 
+  
   //Format data to send to front-end
 
   res.json({
