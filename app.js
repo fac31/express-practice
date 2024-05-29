@@ -1,10 +1,11 @@
+import dotenv from "dotenv";
+dotenv.config();
 import express from "express";
 import OpenAI from "openai";
 import path from "path";
 import { fileURLToPath } from "url";
-import dotenv from "dotenv";
-
-dotenv.config();
+import fetch from "node-fetch";
+import cors from "cors";  // Import the cors middleware
 
 const PORT = process.env.PORT || 3000;
 
@@ -14,32 +15,51 @@ const openai = new OpenAI({ apiKey: process.env.OPENAI_API_KEY });
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-// Middleware
+// Enable CORS for all routes
+
+app.use(cors());
 app.use(express.static(path.join(__dirname, "public")));
 app.use(express.json());
 
+
 app.post("/api-blend", async (req, res) => {
-  const data = req.body;
-  console.log("====================================");
-  console.log(data);
-  console.log("====================================");
+  const { pokeName } = req.body;
+  console.log("Received pokeName:", pokeName);
 
-  // Todo make a call to Pokemon Api:
-  // https://pokeapi.co/api/v2/pokemon/ Hint: image is sprites key
+  try {
+    const response = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokeName.toLowerCase()}`);
+    if (!response.ok) {
+      throw new Error(`Failed to fetch data from PokeAPI: ${response.statusText}`);
+    }
+    const pokemonData = await response.json();
+    const imageUrl = pokemonData.sprites.front_default;
 
-  //Todo make call to chat gpt api
+    const chatGPTResponse = await openai.chat.completions.create({
+      model: "gpt-3.5-turbo",
+      messages: [
+        {
+          role: "system",
+          content: "You are a helpful assistant."
+        },
+        {
+          role: "user",
+          content: "Write a story about a " + pokeName + " in a magical forest."
+        }
+      ],
+      max_tokens: 100
+    });
 
-  
-  //Format data to send to front-end
+    const story = chatGPTResponse.choices[0].message.content;
 
-  res.json({
-    message: "Form data received successfully.",
-    image: "https://picsum.photos/300/300",
-    story: test,
-  });
+    res.json({
+      message: "Form data received successfully.",
+      image: imageUrl,
+      story: story
+    });
+  } catch (error) {
+    console.error("Error:", error);
+    res.status(500).json({ error: error.message });
+  }
 });
 
 app.listen(PORT, () => console.log(`Listening on http://localhost:${PORT}`));
-
-const test =
-  "In a verdant forest, Pikachu roamed freely, sparks flickering playfully from its cheeks. It befriended all creatures, sharing laughter under the starry skies. One stormy night, Pikachu's electric charm illuminated the way for a lost traveler, forging an unbreakable bond of friendship and adventure that lasted a lifetime.";

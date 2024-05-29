@@ -1,11 +1,10 @@
 document.getElementById("pokemon").addEventListener("submit", async (event) => {
-  
   event.preventDefault();
 
-  const pokeName = document.getElementById("poke-name").value;
+  const pokeName = document.getElementById("poke-name").value.trim();
 
   try {
-    const response = await fetch("/api-blend", {
+    const response = await fetch("http://localhost:3000/api-blend", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -18,11 +17,9 @@ document.getElementById("pokemon").addEventListener("submit", async (event) => {
 
       console.log(data);
 
-      // Update the image-box with the fetched image
       document.getElementById("image-box").innerHTML =
         `<img src="${data.image}" alt="${pokeName}" class="h-full w-full object-cover rounded-lg"/>`;
 
-      // Update the story-box with the fetched story
       document.getElementById("story-box").textContent = data.story;
       document.getElementById("pokemon").reset();
     } else {
